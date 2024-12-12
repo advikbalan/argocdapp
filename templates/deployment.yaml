@@ -17,21 +17,6 @@ spec:
       labels:
         app: {{ $.Values.namespace }}
         component: {{ $name }}
-      {{- if $deployment.vault.flags.vaultAgentInitEnabled }}
-      annotations:
-        vault.hashicorp.com/agent-inject: 'true'
-        vault.hashicorp.com/agent-init-first: 'true'
-        vault.hashicorp.com/preserve-secret-case: 'true'
-        vault.hashicorp.com/tls-secret: 'vault-tls-secret'
-        vault.hashicorp.com/ca-cert: "/vault/tls/ca-bundle.crt"
-        vault.hashicorp.com/log-level: '{{ $deployment.vault.configs.logLevel | default "info" }}'
-        vault.hashicorp.com/service: '{{ $deployment.vault.configs.vaultServer }}'
-        vault.hashicorp.com/namespace: '{{ $deployment.vault.configs.vaultNamespace }}'
-        vault.hashicorp.com/auth-type: 'kubernetes'
-        vault.hashicorp.com/auth-path: 'auth/kubernetes/{{ $deployment.vault.configs.kubernetesCluster }}'
-        vault.hashicorp.com/role: '{{ $deployment.vault.configs.vaultFolder }}-kubernetes-role'
-        vault.hashicorp.com/agent-inject-default-template: '{{ $deployment.vault.configs.outputFormat }}'
-      {{- end }}
     spec:
       serviceAccountName: vault-auth
       containers:
@@ -44,7 +29,7 @@ spec:
             {{- end }}
           ports:
             {{- range $port := $deployment.containerPorts }}
-            - containerPort: {{ $port }}
+            - containerPort: {{ . }}
             {{- end }}
           resources:
             limits:
@@ -54,8 +39,8 @@ spec:
               memory: {{ $deployment.resources.requests.memory }}
               cpu: {{ $deployment.resources.requests.cpu }}
       imagePullSecrets:
-        {{- range $pullSecret := $deployment.imagePullSecrets }}
-        - name: {{ $pullSecret }}
+        {{- range $deployment.imagePullSecrets }}
+        - name: {{ . }}
         {{- end }}
 ---
 {{- end }}
