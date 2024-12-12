@@ -18,7 +18,6 @@ spec:
         app: {{ $.Values.namespace }}
         component: {{ $name }}
     spec:
-      serviceAccountName: vault-auth
       containers:
         - name: {{ $name }}
           image: {{ $deployment.image }}
