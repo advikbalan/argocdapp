@@ -4,6 +4,7 @@ kind: Service
 metadata:
   name: {{ $app }}-svc  # Using $app to get the name of the service
 spec:
+  type: {{ (index $.Values.services $app).type }}  # Reference service type here
   ports:
     {{- range $port := (index $.Values.services $app).ports }}
     - name: {{ $port.name }}
