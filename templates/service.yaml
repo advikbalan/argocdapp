@@ -5,7 +5,7 @@ metadata:
    name: {{ $deployment.name }}-svc
 spec:
   ports:
-    {{- range $port := $.Values.services.$app.ports }}
+    {{- range $port := $.Values.services[$app].ports }}
     - name: {{ $port.name }}
       port: {{ $port.port }}
       protocol: {{ $port.protocol }}
