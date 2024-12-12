@@ -29,14 +29,14 @@ deployments:
 
 services:
   nginx-app:
-    type: ClusterIP  # Change this to LoadBalancer if you want external access
+    type: LoadBalancer  # Change this to LoadBalancer if you want external access
     ports:
       - port: 80
         targetPort: 80
         protocol: TCP
 
   redis-app:
-    type: ClusterIP  # Change this to LoadBalancer if you want external access
+    type: LoadBalancer  # Change this to LoadBalancer if you want external access
     ports:
       - port: 6379
         targetPort: 6379
