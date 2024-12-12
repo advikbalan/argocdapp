@@ -31,13 +31,6 @@ spec:
         vault.hashicorp.com/auth-path: 'auth/kubernetes/{{ $deployment.vault.configs.kubernetesCluster }}'
         vault.hashicorp.com/role: '{{ $deployment.vault.configs.vaultFolder }}-kubernetes-role'
         vault.hashicorp.com/agent-inject-default-template: '{{ $deployment.vault.configs.outputFormat }}'
-        {{- range $deployment.vault.secrets }}
-        vault.hashicorp.com/agent-inject-secret-{{ .secretFileName }}: '{{ .secretPath }}'
-        vault.hashicorp.com/agent-inject-template-{{ .secretFileName }}: |
-          {{`{{ with secret " `}} {{ .secretPath }} {{` " }}}}
-          {{`{{ .Data.data | toJSON }}`} }
-          {{`{{ end }}}}
-        {{- end }}
       {{- end }}
     spec:
       serviceAccountName: vault-auth
