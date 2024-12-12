@@ -1,0 +1,43 @@
+namespace: test  # Namespace for both apps
+
+deployments:
+  nginx-app:
+    image: "nginx:latest"
+    replicas: 1
+    containerPorts:
+      - 80
+    resources:
+      limits:
+        memory: "256Mi"
+        cpu: "100m"
+      requests:
+        memory: "128Mi"
+        cpu: "50m"
+
+  redis-app:
+    image: "redis:latest"
+    replicas: 2
+    containerPorts:
+      - 6379
+    resources:
+      limits:
+        memory: "512Mi"
+        cpu: "250m"
+      requests:
+        memory: "256Mi"
+        cpu: "125m"
+
+services:
+  nginx-app:
+    type: ClusterIP  # Change this to LoadBalancer if you want external access
+    ports:
+      - port: 80
+        targetPort: 80
+        protocol: TCP
+
+  redis-app:
+    type: ClusterIP  # Change this to LoadBalancer if you want external access
+    ports:
+      - port: 6379
+        targetPort: 6379
+        protocol: TCP

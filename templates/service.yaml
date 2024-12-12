@@ -1,0 +1,17 @@
+{{- range $app, $deployment := .Values.deployments }}
+apiVersion: v1
+kind: Service
+metadata:
+   name: {{ $deployment.name }}-svc
+spec:
+  ports:
+    {{- range $port := $.Values.services.$app.ports }}
+    - name: {{ $port.name }}
+      port: {{ $port.port }}
+      protocol: {{ $port.protocol }}
+      targetPort: {{ $port.targetPort }}
+    {{- end }}
+  selector:
+    component: {{ $deployment.name }}
+---
+{{- end }}
