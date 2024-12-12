@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ $deployment.name }}-svc
+  name: {{ $app }}-svc  # Using $app to get the name of the service
 spec:
   ports:
     {{- range $port := (index $.Values.services $app).ports }}
@@ -12,6 +12,6 @@ spec:
       targetPort: {{ $port.targetPort }}
     {{- end }}
   selector:
-    component: {{ $deployment.name }}
+    component: {{ $app }}  # Using $app instead of $deployment.name
 ---
 {{- end }}
