@@ -4,19 +4,19 @@ kind: Deployment
 metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "0"
-  name: {{ $name }}
-  namespace: {{ $.Values.namespace }}
+  name: {{ $name }}  # Using $name for deployment name
+  namespace: {{ $.Values.namespace }}  # Using the global namespace value
 spec:
   replicas: {{ $deployment.replicas }}
   revisionHistoryLimit: {{ $deployment.revisionHistoryLimit }}
   selector:
     matchLabels:
-      component: {{ $name }}
+      component: {{ $name }}  # Label component for selector
   template:
     metadata:
       labels:
         app: {{ $.Values.namespace }}
-        component: {{ $name }}
+        component: {{ $name }}  # Label component for the pod
       {{- if $deployment.vault.flags.vaultAgentInitEnabled }}
       annotations:
         vault.hashicorp.com/agent-inject: 'true'
@@ -34,34 +34,35 @@ spec:
         {{- range $deployment.vault.secrets }}
         vault.hashicorp.com/agent-inject-secret-{{ .secretFileName }}: '{{ .secretPath }}'
         vault.hashicorp.com/agent-inject-template-{{ .secretFileName }}: |
-          {{`{{ with secret " `}}{{ .secretPath }}{{ ` " }}`}
-          {{`{{ .Data.data | toJSON }}`}}
-          {{`{{ end }}`}
+          {{`{{ with secret " `}} {{ .secretPath }} {{` " }}} }
+          {{`{{ .Data.data | toJSON }}`} }
+          {{`{{ end }}}}
         {{- end }}
       {{- end }}
     spec:
       serviceAccountName: vault-auth
       containers:
-      - name: {{ $name }}
-        image: {{ $deployment.image }}
-        env:
-          {{- range $key, $value := $deployment.env }}
-          - name: {{ $key }}
-            value: {{ $value }}
-          {{- end }}
-        ports:
-          {{- range $deployment.containerPorts }}
-          - containerPort: {{ . }}
-          {{- end }}
-        resources:
-          limits:
-            memory: {{ $deployment.resources.limits.memory }}
-            cpu: {{ $deployment.resources.limits.cpu }}
-          requests:
-            memory: {{ $deployment.resources.requests.memory }}
-            cpu: {{ $deployment.resources.requests.cpu }}
+        - name: {{ $name }}
+          image: {{ $deployment.image }}
+          env:
+            {{- range $key, $value := $deployment.env }}
+            - name: {{ $key }}
+              value: {{ $value }}
+            {{- end }}
+          ports:
+            {{- range $deployment.containerPorts }}
+            - containerPort: {{ . }}
+            {{- end }}
+          resources:
+            limits:
+              memory: {{ $deployment.resources.limits.memory }}
+              cpu: {{ $deployment.resources.limits.cpu }}
+            requests:
+              memory: {{ $deployment.resources.requests.memory }}
+              cpu: {{ $deployment.resources.requests.cpu }}
       imagePullSecrets:
         {{- range $deployment.imagePullSecrets }}
         - name: {{ . }}
         {{- end }}
+---
 {{- end }}
