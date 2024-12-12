@@ -16,7 +16,7 @@ deployments:
 
   redis-app:
     image: "redis:latest"
-    replicas: 2
+    replicas: 1
     containerPorts:
       - 6379
     resources:
