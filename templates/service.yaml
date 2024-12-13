@@ -1,18 +1,19 @@
-{{- range $app, $deployment := .Values.deployments }}
+{{- range .Values.applications }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ $app }}-svc  # Using $app to get the name of the service
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+  name: {{ .name }}-svc
 spec:
-  type: {{ (index $.Values.services $app).type }}  # Reference service type here
   ports:
-    {{- range $port := (index $.Values.services $app).ports }}
-    - name: {{ $port.name }}
-      port: {{ $port.port }}
-      protocol: {{ $port.protocol }}
-      targetPort: {{ $port.targetPort }}
+    {{- range .service.ports }}
+    - name: {{ .name }}
+      port: {{ .port }}
+      protocol: {{ .protocol }}
+      targetPort: {{ .targetPort }}
     {{- end }}
   selector:
-    component: {{ $app }}  # Using $app instead of $deployment.name
+    component: {{ .name }}
 ---
 {{- end }}

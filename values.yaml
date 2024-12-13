@@ -1,4 +1,4 @@
-namespace: test  # Namespace for both apps
+namespace: new  # Namespace for both apps
 
 deployments:
   nginx-app:
