@@ -16,35 +16,35 @@ spec:
       labels:
         app: {{ .Values.namespace }}
         component: {{ .Values.deployment.name }}
-      {{- if .Values.vault.flags.vaultAgentInitEnabled }}
-      annotations:
-        vault.hashicorp.com/agent-inject: 'true'
-        vault.hashicorp.com/agent-init-first: 'true'
-        vault.hashicorp.com/preserve-secret-case: 'true'
-        vault.hashicorp.com/tls-secret: 'vault-tls-secret'
-        vault.hashicorp.com/ca-cert: "/vault/tls/ca-bundle.crt"
-        vault.hashicorp.com/log-level: '{{ .Values.vault.configs.logLevel | default "debug" }}'
-        vault.hashicorp.com/service: '{{ .Values.vault.configs.vaultServer | default "https://VAULT_ADDR" }}'
-        vault.hashicorp.com/namespace: '{{ .Values.vault.configs.vaultNamespace | default "NAMESPACE" }}'
-        vault.hashicorp.com/auth-type: 'kubernetes'
-        vault.hashicorp.com/auth-path: 'auth/kubernetes/{{ .Values.vault.configs.kubernetesCluster | default "KUBERNETES_CLUSTER" }}'
-        vault.hashicorp.com/role: '{{ .Values.vault.configs.vaultFolder | default "APPNAME.APPID" }}-kubernetes-role'
-        vault.hashicorp.com/agent-inject-default-template: '{{ .Values.vault.configs.outputFormat | default "json" }}'
-        {{- range .Values.vault.secrets }}
-        vault.hashicorp.com/agent-inject-secret-{{ .secretFileName }}: '{{ .secretPath }}'
+      #{{- if .Values.vault.flags.vaultAgentInitEnabled }}
+      #annotations:
+      #  vault.hashicorp.com/agent-inject: 'true'
+      #  vault.hashicorp.com/agent-init-first: 'true'
+      #  vault.hashicorp.com/preserve-secret-case: 'true'
+      #  vault.hashicorp.com/tls-secret: 'vault-tls-secret'
+      #  vault.hashicorp.com/ca-cert: "/vault/tls/ca-bundle.crt"
+      #  vault.hashicorp.com/log-level: '{{ .Values.vault.configs.logLevel | default "debug" }}'
+      #  vault.hashicorp.com/service: '{{ .Values.vault.configs.vaultServer | default "https://VAULT_ADDR" }}'
+      #  vault.hashicorp.com/namespace: '{{ .Values.vault.configs.vaultNamespace | default "NAMESPACE" }}'
+      #  vault.hashicorp.com/auth-type: 'kubernetes'
+      #  vault.hashicorp.com/auth-path: 'auth/kubernetes/{{ .Values.vault.configs.kubernetesCluster | default "KUBERNETES_CLUSTER" }}'
+      #  vault.hashicorp.com/role: '{{ .Values.vault.configs.vaultFolder | default "APPNAME.APPID" }}-kubernetes-role'
+      #  vault.hashicorp.com/agent-inject-default-template: '{{ .Values.vault.configs.outputFormat | default "json" }}'
+      #  {{- range .Values.vault.secrets }}
+      #  vault.hashicorp.com/agent-inject-secret-{{ .secretFileName }}: '{{ .secretPath }}'
         #vault.hashicorp.com/agent-inject-template-{{ .secretFileName }}: |
         #  {{`{{ with secret " `}} {{ .secretPath }} {{` " }}`}
         #  {{`{{ .Data.data | toJSON }}`}}
         #{{- end }}
-      {{- end }}
+      #{{- end }}
     spec:
       #serviceAccountName: vault-auth
       containers:
       - name: {{ .Values.deployment.name }}
         image: {{ .Values.deployment.image }}
-        env:
-            - name: ASPNETCORE_ENVIRONMENT
-              value: {{ .Values.deployment.env.ASPNETCORE_ENVIRONMENT }}
+        #env:
+        #    - name: ASPNETCORE_ENVIRONMENT
+        #      value: {{ .Values.deployment.env.ASPNETCORE_ENVIRONMENT }}
         ports:
           {{- range .Values.deployment.containerPorts }}
           - containerPort: {{ . }}
@@ -58,5 +58,5 @@ spec:
             cpu: {{ .Values.deployment.resources.requests.cpu }}
       #imagePullSecrets:
       #{{- range .Values.deployment.imagePullSecrets }}
-      - name: {{ . }}
-      {{- end }}
+      #- name: {{ . }}
+      #{{- end }}
