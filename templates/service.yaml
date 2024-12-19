@@ -14,4 +14,4 @@ spec:
       protocol: {{ .protocol }}
       targetPort: {{ .targetPort }}
     {{- end }}
-  type: ClusterIP
+  type: LoadBalancer
