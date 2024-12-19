@@ -7,7 +7,6 @@ deployment:
   replicas: 1
   revisionHistoryLimit: 6
   image: nginx:latest
-  
   containerPorts:
     - 5000 
   resources:
@@ -17,7 +16,6 @@ deployment:
     requests:
       memory: "256Mi"
       cpu: "125m"
-  
 
 # Service vars
 service:
@@ -38,5 +36,3 @@ cronjob:
   failedJobsHistoryLimit: 1
   backoffLimit: 4
   ttlSecondsAfterFinished: 3600  # Time after job finishes before cleanup
-
-
