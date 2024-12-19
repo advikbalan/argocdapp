@@ -8,8 +8,10 @@ spec:
     app: {{ .Values.namespace }}
     component: {{ .Values.deployment.name }}
   ports:
+    {{- range .Values.service.ports }}
     - name: http
-      port: {{ .Values.service.ports[0].port }}
-      protocol: {{ .Values.service.ports[0].protocol }}
-      targetPort: {{ .Values.service.ports[0].targetPort }}
+      port: {{ .port }}
+      protocol: {{ .protocol }}
+      targetPort: {{ .targetPort }}
+    {{- end }}
   type: ClusterIP
