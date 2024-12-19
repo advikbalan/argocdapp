@@ -16,37 +16,39 @@ spec:
       template:
         metadata:
           name: {{ .Values.cronjob.deploymentName }}-job
-          {{- if .Values.vault.flags.vaultAgentInitEnabled }}
-          annotations:
-            vault.hashicorp.com/agent-inject: 'true'
-            vault.hashicorp.com/agent-init-first: 'true'
-            vault.hashicorp.com/preserve-secret-case: 'true'
-            vault.hashicorp.com/tls-secret: 'vault-tls-secret'
-            vault.hashicorp.com/ca-cert: "/vault/tls/ca-bundle.crt"
-            vault.hashicorp.com/log-level: '{{ .Values.vault.configs.logLevel | default "debug" }}'
-            vault.hashicorp.com/service: '{{ .Values.vault.configs.vaultServer | default "https://VAULT_ADDR" }}'
-            vault.hashicorp.com/namespace: '{{ .Values.vault.configs.vaultNamespace | default "NAMESPACE" }}'
-            vault.hashicorp.com/auth-type: 'kubernetes'
-            vault.hashicorp.com/auth-path: 'auth/kubernetes/{{ .Values.vault.configs.kubernetesCluster | default "KUBERNETES_CLUSTER" }}'
-            vault.hashicorp.com/role: '{{ .Values.vault.configs.vaultFolder | default "APPNAME.APPID" }}-kubernetes-role'
-            vault.hashicorp.com/agent-inject-default-template: '{{ .Values.vault.configs.outputFormat | default "json" }}'
-            {{- range .Values.vault.secrets }}
-            vault.hashicorp.com/agent-inject-secret-{{ .secretFileName }}: '{{ .secretPath }}'
-            vault.hashicorp.com/agent-inject-template-{{ .secretFileName }}: |
-              {{`{{ with secret " `}} {{ .secretPath }} {{` " }}`}}
-              {{`{{ .Data.data | toJSON }}`}}
-
-            {{- end }}
-          {{- end }}
+          # Uncomment the following block if vault agent injection is enabled
+      # {{- if .Values.vault.flags.vaultAgentInitEnabled }}
+      # annotations:
+      #   vault.hashicorp.com/agent-inject: 'true' # Enables Vault agent injection
+      #   vault.hashicorp.com/agent-init-first: 'true' # Injects agent as the first container
+      #   vault.hashicorp.com/preserve-secret-case: 'true' # Preserves secret case in Vault
+      #   vault.hashicorp.com/tls-secret: 'vault-tls-secret' # TLS secret for Vault communication
+      #   vault.hashicorp.com/ca-cert: "/vault/tls/ca-bundle.crt" # CA certificate path
+      #   vault.hashicorp.com/log-level: '{{ .Values.vault.configs.logLevel | default "debug" }}' # Log level for Vault
+      #   vault.hashicorp.com/service: '{{ .Values.vault.configs.vaultServer | default "https://VAULT_ADDR" }}' # Vault server address
+      #   vault.hashicorp.com/namespace: '{{ .Values.vault.configs.vaultNamespace | default "NAMESPACE" }}' # Vault namespace
+      #   vault.hashicorp.com/auth-type: 'kubernetes' # Authentication type for Vault
+      #   vault.hashicorp.com/auth-path: 'auth/kubernetes/{{ .Values.vault.configs.kubernetesCluster | default "KUBERNETES_CLUSTER" }}' # Auth path
+      #   vault.hashicorp.com/role: '{{ .Values.vault.configs.vaultFolder | default "APPNAME.APPID" }}-kubernetes-role' # Vault role
+      #   vault.hashicorp.com/agent-inject-default-template: '{{ .Values.vault.configs.outputFormat | default "json" }}' # Default template for Vault secrets
+      #   {{- range .Values.vault.secrets }}
+      #   vault.hashicorp.com/agent-inject-secret-{{ .secretFileName }}: '{{ .secretPath }}' # Inject secret from Vault
+      #   # Uncomment the following template to customize secret injection
+      #   # vault.hashicorp.com/agent-inject-template-{{ .secretFileName }}: |
+      #   #   {{`{{ with secret " `}} {{ .secretPath }} {{` " }}`}}
+      #   #   {{`{{ .Data.data | toJSON }}`}}
+      #   #   {{`{{ end }}`}}
+      #   {{- end }}
+      # {{- end }}
         spec:
-          serviceAccountName: vault-auth
+          #serviceAccountName: vault-auth
           containers:
           - name: {{ .Values.cronjob.deploymentName }}
             image: {{ .Values.cronjob.image }}
             command: ["/bin/sh", "-c", "echo 'CronJob executed at $(date)'"]
-            env:
-            - name: ASPNETCORE_ENVIRONMENT
-              value: {{ .Values.deployment.env.ASPNETCORE_ENVIRONMENT }}
+            #env:
+            #- name: ASPNETCORE_ENVIRONMENT
+            #  value: {{ .Values.deployment.env.ASPNETCORE_ENVIRONMENT }}
             ports:
               {{- range .Values.deployment.containerPorts }}
               - containerPort: {{ . }}
@@ -58,9 +60,9 @@ spec:
               requests:
                 memory: {{ .Values.deployment.resources.requests.memory }}
                 cpu: {{ .Values.deployment.resources.requests.cpu }}
-          imagePullSecrets:
-          {{- range .Values.deployment.imagePullSecrets }}
-          - name: {{ . }}
-          {{- end }}
+          #imagePullSecrets:
+          #{{- range .Values.deployment.imagePullSecrets }}
+          #- name: {{ . }}
+          #{{- end }}
           restartPolicy: OnFailure
       parallelism: 1
