@@ -20,7 +20,7 @@ spec:
           containers:
           - name: {{ .Values.cronjob.deploymentName }}
             image: {{ .Values.cronjob.image }}
-            command: ["/bin/sh", "-c", "echo 'CronJob executed at $(date)'"]
+            command: ["/bin/sh", "-c", "echo 'CronJob executed at '; date"]
             ports:
               {{- range .Values.deployment.containerPorts }}
               - containerPort: {{ . }}
