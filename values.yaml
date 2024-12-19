@@ -1,43 +1,96 @@
-namespace: test  # Namespace for both apps
+# Namespace definition
+namespace: unified-api-catalog-dev
 
-deployments:
-  nginx-app:
-    image: "nginx:latest"
-    replicas: 1
-    containerPorts:
-      - 80
-    resources:
-      limits:
-        memory: "256Mi"
-        cpu: "100m"
-      requests:
-        memory: "128Mi"
-        cpu: "50m"
+# Deployment vars
+deployment:
+  name: unified-api-catalog-dev-services
+  replicas: 1
+  revisionHistoryLimit: 6
+  image: humana-eai-uac-docker-virtual.jfrog.io/apicatalog.services:5576490
+  imagePullSecrets: 
+    - unified-api-catalog-dev-cr
+  containerPorts:
+    - 5000 
+  resources:
+    limits:
+      memory: "512Mi"
+      cpu: "250m"
+    requests:
+      memory: "256Mi"
+      cpu: "125m"
+  env:
+    ASPNETCORE_ENVIRONMENT: "Development"
 
-  redis-app:
-    image: "redis:latest"
-    replicas: 1
-    containerPorts:
-      - 6379
-    resources:
-      limits:
-        memory: "512Mi"
-        cpu: "250m"
-      requests:
-        memory: "256Mi"
-        cpu: "125m"
+# CronJob vars
+cronjob:
+  deploymentName: unified-api-catalog-dev-services
+  schedule: "0 * * * *"  # Replace with the actual cron schedule
+  concurrencyPolicy: "Allow"  # You can change to "Forbid" or "Replace" as per your needs
+  suspend: false
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  backoffLimit: 4
+  ttlSecondsAfterFinished: 3600
+  image: humana-eai-uac-docker-virtual.jfrog.io/apicatalog.cronjob:latest  # Replace with your cronjob image
 
-services:
-  nginx-app:
-    type: LoadBalancer  # Change this to LoadBalancer if you want external access
-    ports:
-      - port: 80
-        targetPort: 80
-        protocol: TCP
+  # Vault Sidecar secret injection for CronJob (same as deployment)
+  vault:
+    flags:
+      vaultAgentInitEnabled: "yes"
+    configs:
+      kubernetesCluster: "eai-0-centralus-npe"
+      vaultServer: "https://preprod.vault.humana.net" #NPE server for PROD use https://prod.vault.humana.net
+      vaultNamespace: "nseai"
+      vaultFolder: "unified-api-catalog.app0002181"
+      outputFormat: "json"  # OPTIONAL
+      logLevel: "info"  # OPTIONAL
+      vault.hashicorp.com/ca-cert: '/tls/cabundle.crt'
+    secrets:
+      - secretFileName: "uac-service.json" 
+        secretPath: "/secret/unified-api-catalog.app0002181/uac-service-dev"
+      - secretFileName: "vault-metadata.json"
+        secretPath: "/secret/unified-api-catalog.app0002181/vault_metadata"
 
-  redis-app:
-    type: LoadBalancer  # Change this to LoadBalancer if you want external access
-    ports:
-      - port: 6379
-        targetPort: 6379
-        protocol: TCP
+# Calico policy template vars
+calico:
+  componentSelector: component == 'unified-api-catalog-dev-services'
+  flags:
+    ingressPolicyEnabled: false
+    ipEgressPolicyEnabled: false
+    portEgressPolicyEnabled: false
+  ingress:
+    ingressName: unified-api-catalog-dev-services-ingress-allow
+  ipEgress:
+    cidrs: [ ]
+    ipEgressName: unified-api-catalog-dev-services-egress-ip
+  portEgress:
+    ports: [ ]
+    portEgressName: unified-api-catalog-dev-services-egress-http
+
+# Service vars
+service:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 5000 
+
+# Istio template vars
+istio:
+  # enable flags can be used to turn on or off specific istio features
+  flags:
+    virtualServiceEnabled: true
+  # istioVirtualService
+  virtualService:
+    namespace: unified-api-catalog-dev
+    gateways:
+      - unified-api-catalog-dev-ig
+    match:
+      - appEndpoints:
+          - /
+        destinations:
+          - portNumber: 80
+            host: unified-api-catalog-dev-services-svc
+    appTopLevelDomains:
+      - dev-uacservice.humana.com
+      - dev-uacservice-centralus.humana.com
