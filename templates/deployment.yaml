@@ -36,7 +36,7 @@ spec:
         #  {{`{{ with secret " `}} {{ .secretPath }} {{` " }}`}
         #  {{`{{ .Data.data | toJSON }}`}}
         #{{- end }}
-      #{{- end }}
+      {{- end }}
     spec:
       #serviceAccountName: vault-auth
       containers:
