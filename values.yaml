@@ -6,7 +6,7 @@ deployment:
   name: unified-api-catalog-dev-services
   replicas: 1
   revisionHistoryLimit: 6
-  image: humana-eai-uac-docker-virtual.jfrog.io/apicatalog.services:5576490
+  image: nginx:latest
   imagePullSecrets:
     - unified-api-catalog-dev-cr
   containerPorts:
@@ -21,9 +21,18 @@ deployment:
   env:
     ASPNETCORE_ENVIRONMENT: "Development"
 
+# Service vars
+service:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 80
+
 # CronJob Vars
 cronjob:
   deploymentName: unified-api-catalog-dev-cronjob
+  image: busybox  # Replace with the image you want for the CronJob
   schedule: "*/5 * * * *"  # Every 5 minutes, adjust as needed
   concurrencyPolicy: "Allow"  # Options: Allow, Forbid, Replace
   suspend: false  # Set to true to pause CronJob
