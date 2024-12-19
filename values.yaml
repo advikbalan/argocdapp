@@ -1,9 +1,9 @@
 # Namespace definition
-namespace: cronjob
+namespace: valuestest
 
 # Deployment vars
 deployment:
-  name: unified-api-catalog-dev-services
+  name: valuestest
   replicas: 1
   revisionHistoryLimit: 6
   image: nginx:latest
@@ -25,14 +25,3 @@ service:
       protocol: TCP
       targetPort: 80
 
-# CronJob Vars
-cronjob:
-  deploymentName: unified-api-catalog-dev-cronjob
-  image: busybox  # Replace with the image you want for the CronJob
-  schedule: "*/5 * * * *"  # Every 5 minutes, adjust as needed
-  concurrencyPolicy: "Allow"  # Options: Allow, Forbid, Replace
-  suspend: false  # Set to true to pause CronJob
-  successfulJobsHistoryLimit: 3
-  failedJobsHistoryLimit: 1
-  backoffLimit: 4
-  ttlSecondsAfterFinished: 120  # Time after job finishes before cleanup
