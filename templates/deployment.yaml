@@ -32,13 +32,13 @@ spec:
         vault.hashicorp.com/agent-inject-default-template: '{{ .Values.vault.configs.outputFormat | default "json" }}'
         {{- range .Values.vault.secrets }}
         vault.hashicorp.com/agent-inject-secret-{{ .secretFileName }}: '{{ .secretPath }}'
-        vault.hashicorp.com/agent-inject-template-{{ .secretFileName }}: |
-          {{`{{ with secret " `}} {{ .secretPath }} {{` " }}`}
-          {{`{{ .Data.data | toJSON }}`}}
-        {{- end }}
-      {{- end }}
+        #vault.hashicorp.com/agent-inject-template-{{ .secretFileName }}: |
+        #  {{`{{ with secret " `}} {{ .secretPath }} {{` " }}`}
+        #  {{`{{ .Data.data | toJSON }}`}}
+        #{{- end }}
+      #{{- end }}
     spec:
-      serviceAccountName: vault-auth
+      #serviceAccountName: vault-auth
       containers:
       - name: {{ .Values.deployment.name }}
         image: {{ .Values.deployment.image }}
@@ -56,7 +56,7 @@ spec:
           requests:
             memory: {{ .Values.deployment.resources.requests.memory }}
             cpu: {{ .Values.deployment.resources.requests.cpu }}
-      imagePullSecrets:
-      {{- range .Values.deployment.imagePullSecrets }}
+      #imagePullSecrets:
+      #{{- range .Values.deployment.imagePullSecrets }}
       - name: {{ . }}
       {{- end }}
