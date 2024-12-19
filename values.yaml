@@ -1,5 +1,5 @@
 # Namespace definition
-namespace: unified-api-catalog-dev
+namespace: cronjob
 
 # Deployment vars
 deployment:
@@ -7,8 +7,8 @@ deployment:
   replicas: 1
   revisionHistoryLimit: 6
   image: nginx:latest
-  imagePullSecrets:
-    - unified-api-catalog-dev-cr
+  #imagePullSecrets:
+  #  - unified-api-catalog-dev-cr
   containerPorts:
     - 5000 
   resources:
@@ -18,8 +18,8 @@ deployment:
     requests:
       memory: "256Mi"
       cpu: "125m"
-  env:
-    ASPNETCORE_ENVIRONMENT: "Development"
+  #env:
+  #  ASPNETCORE_ENVIRONMENT: "Development"
 
 # Service vars
 service:
