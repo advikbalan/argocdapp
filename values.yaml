@@ -35,5 +35,5 @@ cronjob:
   successfulJobsHistoryLimit: 2
   failedJobsHistoryLimit: 1
   backoffLimit: 4
-  ttlSecondsAfterFinished: 120  # Time after job finishes before cleanup
+  ttlSecondsAfterFinished: 300  # Time after job finishes before cleanup
 
