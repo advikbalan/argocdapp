@@ -3,7 +3,7 @@ namespace: valuestest
 
 # Deployment vars
 deployment:
-  name: valuestest
+  name: valuestestcentralus
   replicas: 1
   revisionHistoryLimit: 6
   image: nginx:latest
