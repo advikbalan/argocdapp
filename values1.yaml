@@ -36,3 +36,12 @@ cronjob:
   failedJobsHistoryLimit: 1
   backoffLimit: 4
   ttlSecondsAfterFinished: 300  # Time after job finishes before cleanup
+  containerPorts:
+    - 6000 
+  resources:
+    limits:
+      memory: "256Mi"
+      cpu: "250m"
+    requests:
+      memory: "256Mi"
+      cpu: "125m"
