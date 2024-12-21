@@ -23,16 +23,16 @@ spec:
             image: {{ .Values.cronjob.image }}
             command: ["/bin/sh", "-c", "echo 'CronJob executed at '; date"]
             ports:
-              {{- range .Values.deployment.containerPorts }}
+              {{- range .Values.cronjob.containerPorts }}
               - containerPort: {{ . }}
               {{- end }}
             resources:
               limits:
-                memory: {{ .Values.deployment.resources.limits.memory }}
-                cpu: {{ .Values.deployment.resources.limits.cpu }}
+                memory: {{ .Values.cronjob.resources.limits.memory }}
+                cpu: {{ .Values.cronjob.resources.limits.cpu }}
               requests:
-                memory: {{ .Values.deployment.resources.requests.memory }}
-                cpu: {{ .Values.deployment.resources.requests.cpu }}
+                memory: {{ .Values.cronjob.resources.requests.memory }}
+                cpu: {{ .Values.cronjob.resources.requests.cpu }}
           restartPolicy: OnFailure
       parallelism: 1
 {{- end }}
