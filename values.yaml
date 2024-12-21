@@ -25,15 +25,4 @@ service:
       protocol: TCP
       targetPort: 80
 
-# CronJob Vars
-cronjob:
-  deploymentName: valuestest-cronjob
-  image: busybox  # Replace with the image you want for the CronJob
-  schedule: "*/2 * * * *"  # Every 5 minutes, adjust as needed
-  concurrencyPolicy: "Allow"  # Options: Allow, Forbid, Replace
-  suspend: false  # Set to true to pause CronJob
-  successfulJobsHistoryLimit: 2
-  failedJobsHistoryLimit: 1
-  backoffLimit: 4
-  ttlSecondsAfterFinished: 300  # Time after job finishes before cleanup
 
